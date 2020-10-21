@@ -4,6 +4,7 @@ cap = cv2.VideoCapture(0)
 cv2.namedWindow('Learning from images: SIFT feature visualization')
 while True:
 
+    break
     # 1. read each frame from the camera (if necessary resize the image)
     #    and extract the SIFT features using OpenCV methods
     #    Note: use the gray image - so you need to convert the image

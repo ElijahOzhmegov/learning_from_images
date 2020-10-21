@@ -44,5 +44,18 @@ def show_task_2():
         cv2.imshow('Exercise 1.2: OpenCV experiments', transform(frame))
 
 
+def show_task_3():
+    """
+    implement a video streaming example showing SIFT features and visualize its keypoints as illustrated
+
+    :return: None
+    """
+
+    cap = cv2.VideoCapture(0)
+    while cv2.waitKey(10) != KEYS.Q:
+        _, frame = cap.read()
+        cv2.imshow('Exercise 1.3: SIFT features', Filter.sift_detection(frame))
+
+
 if __name__ == "__main__":
     show_task_2()

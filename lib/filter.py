@@ -60,6 +60,15 @@ class Filter:
         add_note_on_the_picture(img, "Canny Edge Detection (key: 6)", label_center=(0, 0))
         return img
 
+    @staticmethod
+    def sift_detection(img: ndarray):
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        sift = cv2.xfeatures2d.SIFT_create()
+        kp = sift.detect(gray)
+        cv2.drawKeypoints(gray, kp, img)
+        add_note_on_the_picture(img, "SIFT Detection (key: 7)", label_center=(0, 0))
+        return img
+
 
 methods = {KEYS.ZERO:  Filter.nothing,
            KEYS.ONE:   Filter.to_hsv,
@@ -68,4 +77,5 @@ methods = {KEYS.ZERO:  Filter.nothing,
            KEYS.FOUR:  Filter.adaptive_gaussian_thresholding,
            KEYS.FIVE:  Filter.otsu_thresholding,
            KEYS.SIX:   Filter.canny_edge_detection,
+           KEYS.SEVEN: Filter.sift_detection,
            KEYS.NINE:  Filter.gaussian_blur}
