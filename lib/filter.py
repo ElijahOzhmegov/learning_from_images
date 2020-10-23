@@ -158,6 +158,7 @@ class Filter:
         after = datetime.now()
         diff = 1e6/(after - before).microseconds
         add_note_on_the_picture(sobel, "FPS " + str(round(diff, 2)), label_center=(0, 0))
+        add_note_on_the_picture(sobel, "My Smart Approach (Key 2)")
 
         return sobel
 
@@ -181,8 +182,62 @@ class Filter:
         after = datetime.now()
         diff = 1e6/(after - before).microseconds
         add_note_on_the_picture(sobel, "FPS " + str(round(diff, 2)), label_center=(0, 0))
+        add_note_on_the_picture(sobel, "OpenCV approach (Key 1)")
 
         return sobel
+
+    @staticmethod
+    def my_silly_sobel_edge_detection(img: ndarray):
+        def silly_convolute(A: ndarray, B: ndarray):
+            output = np.zeros(A.shape)
+
+            n, m = A.shape
+            k, l = B.shape
+
+            n = n - n % k
+            m = m - m % l
+
+            k //= 2
+            l //= 2
+
+            divisor = np.sum(np.abs(B))
+
+            for i in range(k, n - k):
+                for j in range(l, m - l):
+                    left_chunk = A[i-k:i+1+k, j-l:j+1+l]
+                    left_chunk = np.multiply(left_chunk, B)
+                    output[i][j] = np.sum(left_chunk)/divisor
+
+            return output
+
+
+        before = datetime.now()
+
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img = Filter._normalize(img)
+
+        gauss_filter = Helper.make_gaussian(3)
+        sobelmask_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+        sobelmask_y = np.array([[1, 2, 1],  [0, 0, 0],  [-1, -2, -1]])
+
+        img = silly_convolute(img, gauss_filter)
+        sobel_x = silly_convolute(img, sobelmask_x)
+        sobel_y = silly_convolute(img, sobelmask_y)
+
+        sobel = np.sqrt(sobel_x ** 2 + sobel_y ** 2)
+        sobel = np.ascontiguousarray(sobel)
+
+        after = datetime.now()
+        diff = 1e6/(after - before).microseconds
+        add_note_on_the_picture(sobel, "FPS 0.01", label_center=(0, 0))
+        add_note_on_the_picture(sobel, "Stupid approach (Key: 3)")
+
+        return sobel
+
+
+sobel = {KEYS.ONE:   Filter.sobel_edge_detection,
+         KEYS.TWO:   Filter.my_sobel_edge_detection,
+         KEYS.THREE: Filter.my_silly_sobel_edge_detection}
 
 
 methods = {KEYS.ZERO:  Filter.nothing,

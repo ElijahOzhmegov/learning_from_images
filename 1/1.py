@@ -6,6 +6,7 @@ from lib.common import KEYS
 from lib.common import add_note_on_the_picture
 from lib.filter import Filter
 from lib.filter import methods
+from lib.filter import sobel
 
 
 def show_task_1():
@@ -43,6 +44,8 @@ def show_task_2():
         transform = methods[pressed_key] if pressed_key in methods.keys() else transform
         cv2.imshow('Exercise 1.2: OpenCV experiments', transform(frame))
 
+    cv2.destroyAllWindows()
+
 
 def show_task_3():
     """
@@ -56,6 +59,8 @@ def show_task_3():
         _, frame = cap.read()
         cv2.imshow('Exercise 1.3: SIFT features', Filter.sift_detection(frame))
 
+    cv2.destroyAllWindows()
+
 
 def show_task_4():
     """
@@ -67,10 +72,13 @@ def show_task_4():
     """
 
     cap = cv2.VideoCapture(0)
-    while cv2.waitKey(10) != KEYS.Q:
+    transform = Filter.my_sobel_edge_detection
+    while (pressed_key := cv2.waitKey(10)) != KEYS.Q:
         _, frame = cap.read()
-        cv2.imshow('Exercise 1.4: the convolution implementation',
-                   Filter.my_sobel_edge_detection(frame))
+        transform = sobel[pressed_key] if pressed_key in sobel.keys() else transform
+        cv2.imshow('Exercise 1.4: the convolution implementation', transform(frame))
+
+    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
