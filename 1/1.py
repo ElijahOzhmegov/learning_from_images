@@ -46,7 +46,7 @@ def show_task_2():
 
 def show_task_3():
     """
-    implement a video streaming example showing SIFT features and visualize its keypoints as illustrated
+    Implement a video streaming example showing SIFT features and visualize its keypoints as illustrated
 
     :return: None
     """
@@ -57,5 +57,21 @@ def show_task_3():
         cv2.imshow('Exercise 1.3: SIFT features', Filter.sift_detection(frame))
 
 
+def show_task_4():
+    """
+    Implement the convolution of an image with a filter mask on a grayscale image without the functions
+    available in OpenCV or scipy.
+
+    Note: Try to make the implementation as efficient as possible.
+    :return: Your admiration.
+    """
+
+    cap = cv2.VideoCapture(0)
+    while cv2.waitKey(10) != KEYS.Q:
+        _, frame = cap.read()
+        cv2.imshow('Exercise 1.4: the convolution implementation',
+                   Filter.my_sobel_edge_detection(frame))
+
+
 if __name__ == "__main__":
-    show_task_2()
+    show_task_4()
