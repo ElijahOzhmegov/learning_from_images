@@ -1,5 +1,5 @@
 import cv2
-
+from datetime import datetime
 
 FONT       = cv2.FONT_HERSHEY_SIMPLEX
 FONT_SCALE = 1
@@ -41,3 +41,18 @@ def add_note_on_the_picture(img, text="Press SPACE to continue", label_center=No
                 (x, y),
                 FONT, FONT_SCALE,
                 FONT_COLOR, LINE_TYPE)
+
+
+def timeit(method):
+    def timed(*args, **kw):
+        before = datetime.now()
+        result = method(*args, **kw)
+        after = datetime.now()
+        diff = 1e6/(after - before).microseconds
+        add_note_on_the_picture(result, "FPS " + str(round(diff, 2)), label_center=(0, 0))
+
+        return result
+
+    return timed
+
+

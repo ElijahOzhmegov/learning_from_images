@@ -24,4 +24,6 @@
   * Key `1` - OpenCV based Sobel edge detection
   * Key `2` - Fourier based Sobel edge detection (My smart approach)
   * Key `3` - For loop based Sobel edge detection (Stupid approach)
+  * Key `q` - Quit
+  
   

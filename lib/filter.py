@@ -1,18 +1,11 @@
 import cv2
-from datetime import datetime, timedelta
-
 import numpy as np
+
 from numpy import ndarray
 from numpy.fft import fft2, ifft2
-
-from enum import Enum
 from lib.common import KEYS
 from lib.common import add_note_on_the_picture
-
-
-class State(Enum):
-    ORIGINAL   = 0
-    NORMALIZED = 1
+from lib.common import timeit
 
 
 class Helper:
@@ -139,9 +132,8 @@ class Filter:
         return img
 
     @staticmethod
+    @timeit
     def my_sobel_edge_detection(img: ndarray):
-        before = datetime.now()
-
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = Filter._normalize(img)
 
@@ -155,16 +147,13 @@ class Filter:
         sobel = np.sqrt(sobel_x ** 2 + sobel_y ** 2)
         sobel = np.ascontiguousarray(sobel)
 
-        after = datetime.now()
-        diff = 1e6/(after - before).microseconds
-        add_note_on_the_picture(sobel, "FPS " + str(round(diff, 2)), label_center=(0, 0))
         add_note_on_the_picture(sobel, "My Smart Approach (Key 2)")
 
         return sobel
 
     @staticmethod
+    @timeit
     def sobel_edge_detection(img: ndarray):
-        before = datetime.now()
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = Filter._normalize(img)
@@ -179,9 +168,6 @@ class Filter:
         sobel = np.sqrt(sobel_x ** 2 + sobel_y ** 2)
         sobel = np.ascontiguousarray(sobel)
 
-        after = datetime.now()
-        diff = 1e6/(after - before).microseconds
-        add_note_on_the_picture(sobel, "FPS " + str(round(diff, 2)), label_center=(0, 0))
         add_note_on_the_picture(sobel, "OpenCV approach (Key 1)")
 
         return sobel
@@ -210,9 +196,6 @@ class Filter:
 
             return output
 
-
-        before = datetime.now()
-
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = Filter._normalize(img)
 
@@ -227,8 +210,6 @@ class Filter:
         sobel = np.sqrt(sobel_x ** 2 + sobel_y ** 2)
         sobel = np.ascontiguousarray(sobel)
 
-        after = datetime.now()
-        diff = 1e6/(after - before).microseconds
         add_note_on_the_picture(sobel, "FPS 0.01", label_center=(0, 0))
         add_note_on_the_picture(sobel, "Stupid approach (Key: 3)")
 
