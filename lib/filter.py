@@ -69,8 +69,8 @@ class Filter:
 
 
     @staticmethod
-    def nothing(img: ndarray):
-        add_note_on_the_picture(img, "Nothing (key: 0)", label_center=(0, 0))
+    def nothing(img: ndarray, label=True):
+        if label: add_note_on_the_picture(img, "Nothing (key: 0)", label_center=(0, 0))
         return img
 
     @staticmethod
@@ -80,21 +80,21 @@ class Filter:
         return img
 
     @staticmethod
-    def to_hsv(img: ndarray):
+    def to_hsv(img: ndarray, label=True):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        add_note_on_the_picture(img, "HSV colour space (key: 1)", label_center=(0, 0))
+        if label: add_note_on_the_picture(img, "HSV colour space (key: 1)", label_center=(0, 0))
         return img
 
     @staticmethod
-    def to_lab(img: ndarray):
+    def to_lab(img: ndarray, label=True):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-        add_note_on_the_picture(img, "LAB colour space (key: 2)", label_center=(0, 0))
+        if label: add_note_on_the_picture(img, "LAB colour space (key: 2)", label_center=(0, 0))
         return img
 
     @staticmethod
-    def to_yuv(img: ndarray):
+    def to_yuv(img: ndarray, label=True):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
-        add_note_on_the_picture(img, "YUV colour space (key: 3)", label_center=(0, 0))
+        if label: add_note_on_the_picture(img, "YUV colour space (key: 3)", label_center=(0, 0))
         return img
 
     @staticmethod

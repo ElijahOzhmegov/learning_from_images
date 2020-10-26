@@ -82,4 +82,7 @@ def show_task_4():
 
 
 if __name__ == "__main__":
+    show_task_1()
+    show_task_2()
+    show_task_3()
     show_task_4()
