@@ -25,8 +25,8 @@ class ImageRetrieval:
 
     def __create_keypoints(self, h, w, pace=11):
         self.__keypoints = [[cv2.KeyPoint(i*pace, j*pace, pace)
-                             for j in range(1, w+1, pace)]
-                            for i in range(1, h+1, pace)]
+                             for j in range(1, w//pace)]
+                            for i in range(1, h//pace)]
 
         self.__keypoints = reduce(add, self.__keypoints)  # kind of flattering
 
