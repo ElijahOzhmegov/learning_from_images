@@ -1,4 +1,5 @@
 import cv2
+import glob
 from datetime import datetime
 
 FONT       = cv2.FONT_HERSHEY_SIMPLEX
@@ -109,4 +110,9 @@ def k_to_rgb(k: int, K: int):
     upper_limit = 750
     wavelength = lower_limit + (upper_limit - lower_limit)*(k/K)
     return wavelength_to_rgb(wavelength)
+
+
+def load_images(path_to_set: str):
+    train_images = glob.glob(path_to_set)
+    return [(cv2.imread(path, cv2.IMREAD_COLOR), path) for path in train_images]
 

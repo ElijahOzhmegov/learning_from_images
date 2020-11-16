@@ -1,12 +1,9 @@
 import cv2
-import math
-import matplotlib
-import glob
-
-from lib.filter import Filter
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+from lib.common import load_images
 
 
 class LocalFeatureExtractor:
@@ -68,24 +65,33 @@ class LocalFeatureExtractor:
 
         self.features = [calc(chunk) for chunk in chunks]
 
-    def show(self, i: int=0):
+    def show(self, i: int = 0, label: str = None, show=True):
         n = self.__nbucket
+        i = i % n  # fool protection, i is number of the KeyPoint
         feature = self.features[i]
-        plt.bar(np.arange(n), feature)
-        plt.show()
 
+        plt.bar(np.arange(n), feature, align='edge')
+        # plt.grid(True)
+        plt.xticks(range(n), (str(j*(360//n)) + '°' for j in range(n)))
+        # plt.tick_params(axis="x", direction="out", pad=22)
 
-def load_images(path_to_set: str):
-    train_images = glob.glob(path_to_set)
-    return [cv2.imread(path, cv2.IMREAD_COLOR) for path in train_images]
+        if label: plt.title(label + ': feature ' + str(i))
+        if show: plt.show()
+
+    def save(self, i: int = 0, label: str = None):
+        self.show(i, label, show=False)
+        plt.savefig('2_result/' + label.split('/')[-1])
+        plt.close()
 
 
 if __name__ == '__main__':
 
-    imgs = load_images('../Data/images/hog_test/*.jpg')
+    img_paths = load_images('../Data/images/hog_test/*.jpg')
     keypoints = [cv2.KeyPoint(15, 15, 11)]
 
-    for img in imgs:
+    for img_path in img_paths:
+        img, path = img_path
+
         foo = LocalFeatureExtractor(img, keypoints)
         foo.extract_features()
-        foo.show()
+        foo.save(label=str(path))
