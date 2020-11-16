@@ -49,3 +49,24 @@ Probable solutions:
   2. Kmeans++ approach (Which was implicitly implemented)
   3. Use medians (even better PAM algorithm)
   4. Dimension reduction by using PCA (PCA is here as simple ans well-known  approach)
+  
+## Assignment 2
+
+### Exercise 1
+  * Press Any Key
+  ![alt text](2/1_result/output.png "Image Retrieval")
+
+### Exercise 2
+  * NO OUTPUT, the results will be saved in `2/2_result` folder
+  ![alt text](2/2_result/circle.jpg "Circle")
+  ![alt text](2/2_result/diag.jpg "Diag")
+  ![alt text](2/2_result/horiz.jpg "Horizontal")
+  ![alt text](2/2_result/vert.jpg "Vertical")
+  
+### Exercise 3
+  * just press `Space`
+  ![alt text](2/3_results/chess.png "chess")
+  ![alt text](2/3_results/girl.jpg "girl")
+  ![alt text](2/3_results/sunflowers.jpeg "sunflowers")
+
+
