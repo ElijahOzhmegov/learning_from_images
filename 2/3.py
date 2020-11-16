@@ -58,6 +58,7 @@ if __name__ == "__main__":
 
         while cv2.waitKey(10) != KEYS.SPACE:
             cv2.imshow('Hariss Corner Detection (SPACE TO SHOW NEXT)', res)
+            cv2.imwrite("3_results/" + path.split('/')[-1], res)
 
 
 

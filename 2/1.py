@@ -79,10 +79,11 @@ class ImageRetrieval:
 
         vis = cv2.vconcat([combine_images(i) for i in range(len(tts))])
         cv2.imshow("Matches", vis)
+        cv2.imwrite("1_result/output.png", vis)
         cv2.waitKey(0)
 
 
-def main():
+if __name__ == "__main__":
     foo = ImageRetrieval(path_to_trainset='../Data/images/db/*/*/*.jpg',
                          path_to_testset ='../Data/images/db/*/*.jpg',
                          keypoints=(256, 256))
@@ -91,6 +92,3 @@ def main():
     foo.compare_sets()
     foo.show()
 
-
-if __name__ == "__main__":
-    main()
