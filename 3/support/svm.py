@@ -12,16 +12,19 @@ from sklearn import svm
 ############################################################
 
 
-# 1. Implement a SIFT feature extraction for a set of training images ./images/db/train/** (see 2.3 image retrieval)
+# 1. Implement a SIFT feature extraction for a set of training images .
+# /images/db/train/** (see 2.3 image retrieval)
 # use 256x256 keypoints on each image with subwindow of 15x15px
 
 # 2. each descriptor (set of features) need to be flattened in one vector
-# That means you need a X_train matrix containing a shape of (num_train_images, num_keypoints*num_entry_per_keypoint)
+# That means you need a X_train matrix containing a shape of (num_train_images,
+# num_keypoints*num_entry_per_keypoint)
 # num_entry_per_keypoint = histogram orientations as talked about in class
 # You also need a y_train vector containing the labels encoded as integers
 
 
-# 3. We use scikit-learn to train a SVM classifier - however you need to test with different kernel options to get
+# 3. We use scikit-learn to train a SVM classifier - however you need to test
+# with different kernel options to get
 # good results for our dataset.
 
 
