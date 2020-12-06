@@ -215,6 +215,10 @@ class Filter:
 
         return sobel
 
+    @staticmethod
+    def reduce_size(img: ndarray, target_size: tuple = (64, 64)):
+        return cv2.resize(img, target_size, interpolation=cv2.INTER_AREA)
+
 
 sobel = {KEYS.ONE:   Filter.sobel_edge_detection,
          KEYS.TWO:   Filter.my_sobel_edge_detection,
