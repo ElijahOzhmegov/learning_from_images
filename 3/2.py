@@ -46,8 +46,8 @@ X_test,  Y_test  = dataset.get_test()
 #                        J =LF.loss_mse,
 #                        dJ=LF.loss_deriv_mse)
 #
-# loss = foobar.train(X_train, Y_train, n_epoch=10, batch_size=batch_size, alpha=0.05)
-
+# loss = foobar.train(X_train, Y_train, n_epoch=100, batch_size=batch_size, alpha=learning_rate)
+#
 # plt.plot(loss)
 # plt.ylabel('J')
 # plt.xlabel('Iteration number')
@@ -80,6 +80,7 @@ y_v_test = convert_y_to_vect(y_test)
 
 nn_structure = [64, 30, 10]
 
+
 def tmp_loss(y, h):
     return np.linalg.norm((y-h))
 
@@ -91,7 +92,7 @@ foobar = NeuralNetwork(nn_structure=nn_structure,
                        dJ=LF.loss_deriv_sse)
 Y = convert_y_to_vect(y)
 m = len(Y)
-loss = foobar.train(X, Y, n_epoch=400, batch_size=m, alpha=0.25)
+loss = foobar.train(X, Y, n_epoch=100, batch_size=m, alpha=0.25)
 plt.plot(loss)
 plt.ylabel('J')
 plt.xlabel('Iteration number')

@@ -82,7 +82,7 @@ class NeuralNetwork:
         self.__B = {}
         self.__init_weights()
 
-        self.__delta = {}
+        # self.__delta = {}
         self.__Delta_W = {}
         self.__Delta_B = {}
         self.__init_deltas()
@@ -127,47 +127,45 @@ class NeuralNetwork:
         dJ = self.__dJ
         # $ delta^{(nl)} = dJ(y_i, h_i^{(nl)}) * f'(z_i^{(nl)}) $
         delta = dJ(y, h_out) * df(z_out)
-        self.__delta[nl] = delta
-        return self.__delta[nl]
+        return delta
 
-    def __calculate_hidden_layer_delta(self, ll, z_l):
+    def __calculate_hidden_layer_delta(self, ll, delta_l_plus_1, z_l):
         df = self.__df[ll]
         w_l = self.__W[ll]
-        delta_l_plus_1 = self.__delta[ll+1]
         # $ delta^{(l)} = (transpose(W^{(l)}) * delta^{(l+1)}) * f'(z^{(l)}) $
         delta = np.dot(np.transpose(w_l), delta_l_plus_1) * df(z_l)
-        self.__delta[ll] = delta
-        return self.__delta[ll]
+        return delta
 
     def __calculate_loss(self, y, h):
         J = self.__J
-        self.__loss.append(np.abs(J(y, h)))
+        self.__loss.append(J(y, h))
 
     def __backpropagation(self, y, h, z):
         nl = len(self.__nn_structure)
+        delta = {}
 
         h_out = h[nl]
         z_out = z[nl]
-        self.__calculate_out_layer_delta(y, h_out, z_out)
+        delta[nl] = self.__calculate_out_layer_delta(y, h_out, z_out)
         self.__calculate_loss(y, h_out)
 
         for ll in range(nl - 1, 1, -1):
-            self.__calculate_hidden_layer_delta(ll, z[ll])
+            delta[ll] = self.__calculate_hidden_layer_delta(ll, delta[ll + 1], z[ll])
 
-        return self.__delta
+        return delta
 
     def __update_deltas(self, h, delta):
         nl = len(self.__nn_structure)
 
         for ll in range(nl - 1, 0, -1):
             # $ \Delta W^{(l)} = \Delta W^{(l)} + delta^{(l+1)} * transpose(h^{(l)}) $
-            self.__Delta_W[ll] += np.dot(delta[ll + 1][:, np.newaxis], np.transpose(h[ll][:, np.newaxis]))
+            self.__Delta_W[ll] += np.dot(delta[ll + 1][:, np.newaxis],
+                                         np.transpose(h[ll][:, np.newaxis]))
             # $ \Delta B^{(l)} = \Delta B^{(l)} + delta^{(l+1)} $
             self.__Delta_B[ll] += delta[ll + 1]
 
-    def __gradient_descent_step(self, alpha):
+    def __gradient_descent_step(self, alpha, m):
         nl = len(self.__nn_structure)
-        m = self.__nn_structure[-1]
 
         Delta_W = self.__Delta_W
         Delta_B = self.__Delta_B
@@ -188,7 +186,7 @@ class NeuralNetwork:
 
         return output_delta
 
-    def __go_thru_trainset(self, X, Y, batch_size=4, alpha=0.25):
+    def __go_thru_trainset(self, X, Y, batch_size=4, alpha=0.25, i=0):
         set_size = len(Y)
 
         feed_forward = self.__feed_forward
@@ -199,26 +197,42 @@ class NeuralNetwork:
 
         k = -1
         while (k := k + 1) < set_size:
-            delta = dict()
+            # delta = dict()
             leap = np.min([k + batch_size, set_size])
             h = None
             for k in range(k, leap):
-                h, z = feed_forward(X[k].flatten())
-                delta[k % batch_size] = backpropagation(Y[k], h, z)
+                h, z = feed_forward(X[k, :])
+                # np.save('my/' + str(i) + 'h1_' + str(k) + '.npy', h[1], allow_pickle=True)
+                # np.save('my/' + str(i) + 'h2_' + str(k) + '.npy', h[2], allow_pickle=True)
+                # np.save('my/' + str(i) + 'h3_' + str(k) + '.npy', h[3], allow_pickle=True)
+                delta = backpropagation(Y[k, :], h, z)
+                update_weights(h, delta)
 
-            averaged_delta = average(delta)
-            update_weights(h, averaged_delta)
-            gradient_descent_step(alpha)
+
+                # np.save('my/' + str(i) + 'delta3_' + str(k) + '.npy', delta[3], allow_pickle=True)
+                # np.save('my/' + str(i) + 'delta2_' + str(k) + '.npy', delta[2], allow_pickle=True)
+
+            # averaged_delta = average(delta)
+            gradient_descent_step(alpha, batch_size)
+
 
             # print("Weights updated, k: ", k)
 
     def train(self, X, Y, n_epoch=80, batch_size=4, alpha=0.25):
+        m = len(Y)
 
         loss = []
         for i in range(n_epoch):
-            print("Epoch:", i)
-            self.__go_thru_trainset(X, Y, batch_size, alpha)
+            # print("Epoch:", i)
+            self.__init_deltas()
+            self.__go_thru_trainset(X, Y, batch_size, alpha, i)
             loss.append(np.mean(self.__loss))
+            # np.save('W1_' + str(i) + '.npy', self.__W[1], allow_pickle=True)
+            # np.save('B1_' + str(i) + '.npy', self.__B[1], allow_pickle=True)
+            # np.save('W2_' + str(i) + '.npy', self.__W[2], allow_pickle=True)
+            # np.save('B2_' + str(i) + '.npy', self.__B[2], allow_pickle=True)
+            # np.save(str(i) + '_cost_vector.npy', self.__loss, allow_pickle=True)
+            print(loss[-1])
             self.__loss = []
 
         return loss
