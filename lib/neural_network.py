@@ -170,9 +170,11 @@ class NeuralNetwork:
         Delta_W = self.__Delta_W
         Delta_B = self.__Delta_B
 
+        # print(np.max(Delta_W[nl - 1]))
+
         for l in range(nl - 1, 0, -1):
-            self.__W[l] += -alpha * (1.0 / m * Delta_W[l])
-            self.__B[l] += -alpha * (1.0 / m * Delta_B[l])
+            self.__W[l] += -alpha * (1.0 / m) * Delta_W[l]
+            self.__B[l] += -alpha * (1.0 / m) * Delta_B[l]
 
     @staticmethod
     def _average(delta):
@@ -201,22 +203,13 @@ class NeuralNetwork:
             leap = np.min([k + batch_size, set_size])
             h = None
             for k in range(k, leap):
-                h, z = feed_forward(X[k, :])
-                # np.save('my/' + str(i) + 'h1_' + str(k) + '.npy', h[1], allow_pickle=True)
-                # np.save('my/' + str(i) + 'h2_' + str(k) + '.npy', h[2], allow_pickle=True)
-                # np.save('my/' + str(i) + 'h3_' + str(k) + '.npy', h[3], allow_pickle=True)
+                h, z = feed_forward(X[k])
+                # print("K", k, z)
                 delta = backpropagation(Y[k, :], h, z)
                 update_weights(h, delta)
 
-
-                # np.save('my/' + str(i) + 'delta3_' + str(k) + '.npy', delta[3], allow_pickle=True)
-                # np.save('my/' + str(i) + 'delta2_' + str(k) + '.npy', delta[2], allow_pickle=True)
-
-            # averaged_delta = average(delta)
             gradient_descent_step(alpha, batch_size)
-
-
-            # print("Weights updated, k: ", k)
+            # print(k)
 
     def train(self, X, Y, n_epoch=80, batch_size=4, alpha=0.25):
         m = len(Y)
@@ -227,12 +220,6 @@ class NeuralNetwork:
             self.__init_deltas()
             self.__go_thru_trainset(X, Y, batch_size, alpha, i)
             loss.append(np.mean(self.__loss))
-            # np.save('W1_' + str(i) + '.npy', self.__W[1], allow_pickle=True)
-            # np.save('B1_' + str(i) + '.npy', self.__B[1], allow_pickle=True)
-            # np.save('W2_' + str(i) + '.npy', self.__W[2], allow_pickle=True)
-            # np.save('B2_' + str(i) + '.npy', self.__B[2], allow_pickle=True)
-            # np.save(str(i) + '_cost_vector.npy', self.__loss, allow_pickle=True)
-            print(loss[-1])
             self.__loss = []
 
         return loss
@@ -246,11 +233,17 @@ class NeuralNetwork:
 
         for k in range(set_size):
             h, _ = feed_forward(X[k].flatten())
-            correct = np.argmax(Y[k])
-            predicted = np.argmax(h[nl])
-            loss.append((correct, predicted))
+            correct = Y[k]
+            predicted = h[nl]
+            loss.append(np.argmax(correct) == np.argmax(predicted))
 
-        return loss
+        return np.sum(loss) / set_size * 100.
+
+    def get_weights(self):
+        return self.__W
+
+    def get_bias(self):
+        return self.__B
 
 
 class ActivationFunction:
@@ -270,12 +263,14 @@ class ActivationFunction:
     @staticmethod
     def softmax(z):
         """softmax function to transform values to probabilities"""
+        # z -= z.max()
         numerator = np.exp(z)
         denominator = np.sum(numerator)
         return numerator/denominator
 
     @staticmethod
     def softmax_derivative(z):
+        # z -= z.max()
         numerator = np.exp(z)
         esum = np.sum(numerator)
         denominator = np.power(esum, 2)
@@ -328,17 +323,18 @@ class LossFunction:
         return dCda2
 
     @staticmethod
-    def loss_crossentropy(activation, y_batch):
+    def loss_crossentropy(y, h):
         """cross entropy loss function"""
-        batch_size = y_batch.shape[0]
-        loss = (-y_batch * np.log(activation)).sum() / batch_size
+        batch_size = y.shape[0]
+        h[h == 0.] = 1e-3  # a patch to make it work
+        loss = (-y * np.log(h)).sum() / batch_size
         return loss
 
     @staticmethod
-    def loss_deriv_crossentropy(activation, y_batch):
+    def loss_deriv_crossentropy(y, h):
         """derivative of the mean cross entropy loss function"""
-        batch_size = y_batch.shape[0]
-        dCda2 = activation
-        dCda2[range(batch_size), np.argmax(y_batch, axis=1)] -= 1
-        dCda2 /= batch_size
-        return dCda2
+        batch_size = y.shape[0]
+        loss = -(1/batch_size) * (y / h)
+        loss[np.isnan(loss)] = 0.   # a patch to make it work
+        loss[np.isinf(loss)] = 1000 # a patch to make it work
+        return loss
